@@ -1,4 +1,4 @@
-package dvkgc.phaser.utils;
+package phasermultires.utils;
 /****
 * Copyright (c) 2013 Jason O'Neil
 * 

@@ -1,6 +1,6 @@
-package dvkgc.phaser;
+package phasermultires;
 
-import dvkgc.phaser.states.MultiResState;
+import phasermultires.states.MultiResState;
 import js.Browser;
 import phaser.core.Game;
 import phaser.core.ScaleManager;

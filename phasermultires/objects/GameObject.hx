@@ -1,6 +1,6 @@
-package dvkgc.phaser.objects;
-import dvkgc.phaser.Root;
-import dvkgc.phaser.states.MultiResState;
+package phasermultires.objects;
+import phasermultires.Root;
+import phasermultires.states.MultiResState;
 import phaser.core.Game;
 import phaser.core.Group;
 import phaser.geom.Rectangle;
@@ -25,7 +25,9 @@ class GameObject
 	public var initialized:Bool = false;
 	public var enableUpdate:Bool = false;
 	public var kill:Bool = false; //much like CE, setting to true will remove the GameObject from MultiResState and call destroy
+	
 	public var cacheBounds:Rectangle;
+	var boundsDirty:Bool = true;
 	
 	public function new(?group:Group = null) 
 	{
@@ -36,6 +38,12 @@ class GameObject
 		state = root.getCurrentMultiResState();
 		this.group = group != null? group : state.container;
 		cacheBounds = new Rectangle(0, 0, 0, 0);
+	}
+	
+	public function cacheBoundsSetup(?object:Dynamic):Rectangle
+	{
+		object.updateTransform();
+		return cacheBounds = object.getBounds();
 	}
 	
 	//initialize is called when added to the state

@@ -1,4 +1,4 @@
-package dvkgc.phaser.utils;
+package phasermultires.utils;
 import phaser.geom.Rectangle;
 
 class MathUtils

@@ -1,8 +1,8 @@
-package dvkgc.phaser.states;
+package phasermultires.states;
 
-import dvkgc.phaser.objects.GameObject;
-import dvkgc.phaser.Root;
-import dvkgc.phaser.utils.MathUtils;
+import phasermultires.objects.GameObject;
+import phasermultires.Root;
+import phasermultires.utils.MathUtils;
 import phaser.core.Group;
 import phaser.core.State;
 import phaser.gameobjects.Graphics;
