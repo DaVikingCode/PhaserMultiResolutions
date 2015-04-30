@@ -30,22 +30,12 @@ class MathUtils
 		
 	public static function getFitHeightRatio(fit:Rectangle,inside:Rectangle,scale:Float = 1):Float 
 	{
-		var ratio:Float = 1;
-		if (inside.height / inside.width > fit.height / fit.width)
-			ratio = inside.width / fit.width;
-		else
-			ratio = inside.height / fit.height;
-		return ratio*scale;
+		return (inside.height / fit.height)*scale;
 	}
 		
 
 	public static function getFitWidthRatio(fit:Rectangle,inside:Rectangle,scale:Float = 1):Float 
 	{
-		var ratio:Float = 1;
-		if (inside.width / inside.height < fit.width / fit.height)
-			ratio = inside.height / fit.height;
-		else
-			ratio = inside.width / fit.width;
-		return ratio*scale;
+		return (inside.width / fit.width)*scale;
 	}
 }
