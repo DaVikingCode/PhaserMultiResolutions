@@ -1,4 +1,5 @@
 package phasermultires.objects;
+import phaser.gameobjects.Sprite;
 import phasermultires.Root;
 import phasermultires.states.MultiResState;
 import phaser.core.Game;
@@ -15,6 +16,8 @@ class GameObject
 	private var game:Game;
 	private var state:MultiResState;
 	private var group:Group;
+	
+	public var sprite:Sprite;
 	
 	//x and y only use to set things up;
 	@:isVar public var x(get, set):Float;
@@ -40,10 +43,13 @@ class GameObject
 		cacheBounds = new Rectangle(0, 0, 0, 0);
 	}
 	
-	public function cacheBoundsSetup(?object:Dynamic):Rectangle
+	public function cacheBoundsSetup(?object:Dynamic,?autoSaveToCacheBounds:Bool = true):Rectangle
 	{
 		object.updateTransform();
-		return cacheBounds = object.getBounds();
+		var r:Rectangle = object.getBounds();
+		if (autoSaveToCacheBounds)
+			cacheBounds = r;
+		return r;
 	}
 	
 	//initialize is called when added to the state
