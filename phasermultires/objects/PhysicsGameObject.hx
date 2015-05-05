@@ -1,14 +1,26 @@
 package phasermultires.objects;
+import nape.callbacks.InteractionCallback;
+import nape.geom.Vec2;
+import nape.phys.Body;
+import nape.phys.BodyType;
+import nape.shape.Shape;
 import phaser.core.Group;
 import phaser.geom.Rectangle;
-import phaser.physics.p2.Body;
+import phasermultires.physics.Nape;
 
 class PhysicsGameObject extends GameObject
 {
 	public var body:Body;
+	public var shape:Shape;
+	public var nape:Nape;
 	
-	public var offX:Float = 0;
-	public var offY:Float = 0;
+	public static var debugScaleX:Float = 1;
+	public static var debugScaleY:Float = 1;
+	public static var debugOffX:Float = 0;
+	public static var debugOffY:Float = 0;
+	
+	var shapeTranslate:Vec2 = Vec2.get();
+	var debugArtColor:String = "green";
 	
 	public function new(?group:Group = null) 
 	{
@@ -18,11 +30,14 @@ class PhysicsGameObject extends GameObject
 	override public function initialize():Void
 	{
 		super.initialize();
+		nape = cast state.getObjectByType(Nape);
 		doPhysics();
+		
+		body.align();
 	}
 	
-	public static  var debugscaleX:Float = 20;
-	public static  var debugscaleY:Float = 20;
+	public static  var phScaleX:Float = 1;
+	public static  var phScaleY:Float = 1;
 	
 	override public function update():Void
 	{
@@ -33,49 +48,51 @@ class PhysicsGameObject extends GameObject
 		}
 		
 		if(game.config.enableDebug) {
-				game.debug.geom(new Rectangle(body.x * debugscaleX, body.y * debugscaleY, body.data.shapes[0].width * debugscaleX , body.data.shapes[0].height * debugscaleY),"red",false);
+				game.debug.geom(
+				new Rectangle((this.x - body.bounds.width/2 + shapeTranslate.x) * debugScaleX + debugOffX, (this.y- body.bounds.height/2 + shapeTranslate.y) * debugScaleY + debugOffY, body.bounds.width * debugScaleX, body.bounds.height * debugScaleY),debugArtColor,false);
 		}
 	}
 	
 	public function doPhysics()
 	{
 		createBody();
-		untyped  body.data.userData = this;
-		game.physics.p2.addBody(body);
-		body.onBeginContact.add(onBeginContact);
-		body.onEndContact.add(onEndContact);
+		if(sprite != null) {
+		width = sprite.width;
+		height = sprite.height;
+		}
+		body.userData.myData = this;
+		body.space = nape.space;
 	}
 	
-	function onBeginContact(body:Body,shape1:Dynamic,shape2:Dynamic,contact:Dynamic):Void{}
+	public function onBeginContact(interaction:InteractionCallback):Void{}
 	
-	function onEndContact(body:Body, shape1:Dynamic, shape2:Dynamic, contact:Dynamic):Void { }
-	
-	function body2GameObject(body:Body):PhysicsGameObject { return body.data.userData; }
+	public function onEndContact(interaction:InteractionCallback):Void{}
 	
 	function createBody()
 	{
-		body = new Body(game);
+		body = new Body(BodyType.KINEMATIC);
 	}
 	
 	override public function destroy()
 	{
 		if (body != null) {
-			body.removeNextStep  = true;
-			body.onBeginContact.remove(onBeginContact);
-			body.onEndContact.remove(onEndContact);
-			//body.destroy();
+			body.space = null;
+			nape.space.bodies.remove(body);
 		}
 		super.destroy();
 	}
 	
 	override public function get_x() {
-		return this.x;
+			return this.x;
 	 }
 
 	override public function set_x(x):Float {
-		if (body != null) {
-			this.x = x;
-			body.x = body.world.pxm(x + offX);
+		if (body != null && body.position != null) {
+			body.space = null;
+			var pos:Vec2 = body.position ;
+			this.x =  pos.x = x;
+			body.position = pos;
+			body.space = nape.space;
 			return x;
 		}
 		else
@@ -83,13 +100,16 @@ class PhysicsGameObject extends GameObject
 	}
 	
 	override public function get_y() {
-		return this.y;
+			return this.y;
 	 }
 
 	override public function set_y(y):Float {
-		if (body != null) {
-			this.y = y;
-			body.y = body.world.pxm(y + offY);
+		if (body != null && body.position != null) {
+			body.space = null;
+			var pos:Vec2 = body.position ;
+			this.y = pos.y = y;
+			body.position = pos;
+			body.space = nape.space;
 			return y;
 		}
 		else

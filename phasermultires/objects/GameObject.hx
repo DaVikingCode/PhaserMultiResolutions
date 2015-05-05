@@ -17,6 +17,7 @@ class GameObject
 	private var state:MultiResState;
 	private var group:Group;
 	
+	public var name:String;
 	public var sprite:Sprite;
 	
 	//x and y only use to set things up;

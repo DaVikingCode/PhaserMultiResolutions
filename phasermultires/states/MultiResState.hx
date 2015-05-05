@@ -170,6 +170,17 @@ class MultiResState extends State
 		sprite.y = stageRect.top +  posY * root.scaleFactor;
 	}
 	
+	public function getObjectByType(t:Dynamic):GameObject
+	{
+		for (go in gameObjects)
+		{
+			if (Std.is(go, t))
+				return go;
+		}
+		
+		return null;
+	}
+	
 	public function addGameObject(object:GameObject)
 	{
 		object.initialize();
