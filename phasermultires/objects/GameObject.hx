@@ -1,10 +1,10 @@
 package phasermultires.objects;
-import phaser.gameobjects.Sprite;
-import phasermultires.Root;
-import phasermultires.states.MultiResState;
 import phaser.core.Game;
 import phaser.core.Group;
+import phaser.gameobjects.Sprite;
 import phaser.geom.Rectangle;
+import phasermultires.Root;
+import phasermultires.states.MultiResState;
 
 /**
  * This is more of a structure to help with MultiResState.

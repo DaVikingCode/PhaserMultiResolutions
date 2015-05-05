@@ -88,11 +88,9 @@ class PhysicsGameObject extends GameObject
 
 	override public function set_x(x):Float {
 		if (body != null && body.position != null) {
-			body.space = null;
 			var pos:Vec2 = body.position ;
 			this.x =  pos.x = x;
 			body.position = pos;
-			body.space = nape.space;
 			return x;
 		}
 		else
@@ -105,11 +103,9 @@ class PhysicsGameObject extends GameObject
 
 	override public function set_y(y):Float {
 		if (body != null && body.position != null) {
-			body.space = null;
 			var pos:Vec2 = body.position ;
 			this.y = pos.y = y;
 			body.position = pos;
-			body.space = nape.space;
 			return y;
 		}
 		else
