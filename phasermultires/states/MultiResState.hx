@@ -199,10 +199,12 @@ class MultiResState extends State
 	}
 	
 	var gogc:Array<GameObject> = new Array<GameObject>();
+	public var playing:Bool = true;
 	
 	override function update()
 	{
 		super.update();
+
 		for (go in gameObjects)
 		{
 			if(go.enableUpdate)
@@ -220,7 +222,13 @@ class MultiResState extends State
 	override function shutdown():Void {
 		game.scale.onSizeChange.remove(_onResize);
 		game.scale.onSizeChange.remove(onResize);
-		for (go in gameObjects){removeGameObject(go);}
+		
+		//destroy objects in reverse order so physics are last.
+		gameObjects.reverse();
+		
+		for (go in gameObjects) {
+			removeGameObject(go); }
+			
 		gameObjects = [];
 		gogc = [];
 		super.shutdown();

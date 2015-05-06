@@ -81,8 +81,8 @@ class PhysicsGameObject extends GameObject
 	{
 		shapeTranslate.dispose();
 		if (body != null) {
-			body.space = null;
 			nape.space.bodies.remove(body);
+			body.space = null;
 		}
 		super.destroy();
 	}
