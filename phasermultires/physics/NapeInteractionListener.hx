@@ -25,32 +25,32 @@ class NapeInteractionListener
 	}
 	
 	public function destroy():Void {
-			
+			set_enabled(false);
 			_space.listeners.clear();
 	}
 	
 	public function onInteractionBegin(interactionCallback:InteractionCallback):Void {
 			
-			var a:PhysicsGameObject = interactionCallback.int1.userData.myData;
-			var b:PhysicsGameObject = interactionCallback.int2.userData.myData;
+			var bodyUserDataA:BodyUserData = cast interactionCallback.int1.userData.bodyUserData;
+			var bodyUserDataB:BodyUserData = cast interactionCallback.int2.userData.bodyUserData;
 			
-			if (a == null || b == null)
+			if (bodyUserDataA == null || bodyUserDataB == null)
 				return;
 			
-			a.onBeginContact(interactionCallback);
-			b.onBeginContact(interactionCallback);
+			bodyUserDataA.gameObject.onBeginContact(interactionCallback);
+			bodyUserDataB.gameObject.onBeginContact(interactionCallback);
 		}
 		
 		public function onInteractionEnd(interactionCallback:InteractionCallback):Void {
 			
-			var a:PhysicsGameObject = interactionCallback.int1.userData.myData;
-			var b:PhysicsGameObject = interactionCallback.int2.userData.myData;
+			var bodyUserDataA:BodyUserData = cast interactionCallback.int1.userData.bodyUserData;
+			var bodyUserDataB:BodyUserData = cast interactionCallback.int2.userData.bodyUserData;
 			
-			if (a == null || b == null)
+			if (bodyUserDataA == null || bodyUserDataB == null)
 				return;
-				
-			a.onEndContact(interactionCallback);
-			b.onEndContact(interactionCallback);
+			
+			bodyUserDataA.gameObject.onEndContact(interactionCallback);
+			bodyUserDataB.gameObject.onEndContact(interactionCallback);
 		}
 		
 		public function set_enabled(value:Bool):Void {

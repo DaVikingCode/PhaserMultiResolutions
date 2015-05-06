@@ -41,8 +41,24 @@ class Nape extends GameObject
 		super.destroy();
 	}
 	
-	static public function getOtherInteractor(self:PhysicsGameObject, callback:InteractionCallback):Interactor {
-			return self == callback.int1.userData.myData ? callback.int2 : callback.int1;
-		}
+	/**
+	 * Get this body user data, as one PhysicsGameObject can have many bodies and can be identified by BodyUserData.id or have a different BodyUserData.data
+	 * @param	self
+	 * @param	callback
+	 * @return
+	 */
+	static public function getThisBodyUserData(self:PhysicsGameObject, callback:InteractionCallback):BodyUserData {
+			return self == cast(callback.int1.userData.bodyUserData, BodyUserData).gameObject ? cast(callback.int1.userData.bodyUserData, BodyUserData) : cast(callback.int2.userData.bodyUserData, BodyUserData);
+	}
+	
+	/**
+	 * Get the BodyUserData of the object we collide with.
+	 * @param	self
+	 * @param	callback
+	 * @return
+	 */
+	static public function getOtherBodyUserData(self:PhysicsGameObject, callback:InteractionCallback):BodyUserData {
+			return self == cast(callback.int1.userData.bodyUserData, BodyUserData).gameObject ? cast(callback.int2.userData.bodyUserData, BodyUserData) : cast(callback.int1.userData.bodyUserData, BodyUserData);
+	}
 	
 }

@@ -6,6 +6,7 @@ import nape.phys.BodyType;
 import nape.shape.Shape;
 import phaser.core.Group;
 import phaser.geom.Rectangle;
+import phasermultires.physics.BodyUserData;
 import phasermultires.physics.Nape;
 
 class PhysicsGameObject extends GameObject
@@ -21,6 +22,8 @@ class PhysicsGameObject extends GameObject
 	
 	var shapeTranslate:Vec2 = Vec2.get();
 	var debugArtColor:String = "green";
+	
+	var dirty:Bool = false;
 	
 	public function new(?group:Group = null) 
 	{
@@ -42,9 +45,10 @@ class PhysicsGameObject extends GameObject
 	override public function update():Void
 	{
 		super.update();
-		if (sprite != null) {
+		if (sprite != null && dirty) {
 			sprite.x = this.x;
 			sprite.y = this.y;
+			dirty = false;
 		}
 		
 		if(game.config.enableDebug) {
@@ -60,7 +64,7 @@ class PhysicsGameObject extends GameObject
 		width = sprite.width;
 		height = sprite.height;
 		}
-		body.userData.myData = this;
+		body.userData.bodyUserData = new BodyUserData(this,"main");
 		body.space = nape.space;
 	}
 	
@@ -70,11 +74,12 @@ class PhysicsGameObject extends GameObject
 	
 	function createBody()
 	{
-		body = new Body(BodyType.KINEMATIC);
+		body = new Body(BodyType.KINEMATIC,Vec2.weak(this.x,this.y));
 	}
 	
 	override public function destroy()
 	{
+		shapeTranslate.dispose();
 		if (body != null) {
 			body.space = null;
 			nape.space.bodies.remove(body);
@@ -91,6 +96,7 @@ class PhysicsGameObject extends GameObject
 			var pos:Vec2 = body.position ;
 			this.x =  pos.x = x;
 			body.position = pos;
+			dirty = true;
 			return x;
 		}
 		else
@@ -106,6 +112,7 @@ class PhysicsGameObject extends GameObject
 			var pos:Vec2 = body.position ;
 			this.y = pos.y = y;
 			body.position = pos;
+			dirty = true;
 			return y;
 		}
 		else
