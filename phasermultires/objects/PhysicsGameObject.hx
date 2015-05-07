@@ -100,13 +100,11 @@ class PhysicsGameObject extends GameObject
 		
 		var shapeTranslate:Vec2 = Vec2.get(-pivotX + w/2 , -pivotY + h/2 );
 		
-		
 		if (rect != null)
 		{
 			shapeTranslate.x += rect.x;
 			shapeTranslate.y += rect.y;
 		}
-		//shapeTranslate.muleq(scaleFactor);
 		
 		shape.sensorEnabled = sensor;
 		b.shapes.add(shape);
