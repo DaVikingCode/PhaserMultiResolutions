@@ -5,6 +5,7 @@ import nape.phys.Body;
 import nape.phys.BodyType;
 import nape.shape.Shape;
 import phaser.core.Group;
+import phaser.gameobjects.Sprite;
 import phaser.geom.Rectangle;
 import phasermultires.physics.BodyUserData;
 import phasermultires.physics.Nape;
@@ -35,8 +36,6 @@ class PhysicsGameObject extends GameObject
 		super.initialize();
 		nape = cast state.getObjectByType(Nape);
 		doPhysics();
-		
-		body.align();
 	}
 	
 	public static  var phScaleX:Float = 1;
@@ -53,7 +52,7 @@ class PhysicsGameObject extends GameObject
 		
 		if(game.config.enableDebug) {
 				game.debug.geom(
-				new Rectangle((this.x - body.bounds.width/2 + shapeTranslate.x) * debugScaleX + debugOffX, (this.y- body.bounds.height/2 + shapeTranslate.y) * debugScaleY + debugOffY, body.bounds.width * debugScaleX, body.bounds.height * debugScaleY),debugArtColor,false);
+				new Rectangle((body.position.x - body.bounds.width/2 + shapeTranslate.x) * debugScaleX + debugOffX, (body.position.y - body.bounds.height/2 + shapeTranslate.y) * debugScaleY + debugOffY, body.bounds.width * debugScaleX, body.bounds.height * debugScaleY),debugArtColor,false);
 		}
 	}
 	
@@ -75,6 +74,51 @@ class PhysicsGameObject extends GameObject
 	function createBody()
 	{
 		body = new Body(BodyType.KINEMATIC,Vec2.weak(this.x,this.y));
+	}
+	
+	public static function bodyFactory(sprite:Sprite,space:nape.space.Space, type:BodyType, sensor:Bool, ?position:Vec2 = null, ?rect:Rectangle = null):Dynamic
+	{
+		var d:Dynamic = {body:null, shape:null, shapeTranslate:null };
+		
+		if (position == null)
+			position = Vec2.weak();
+			
+		var w:Float = sprite.width;
+		var h:Float = sprite.height;
+		
+		if (rect != null)
+		{
+			w = rect.width;
+			h = rect.height;
+		}
+		
+		var b:Body = new Body(type, position);
+		var shape:Shape = new nape.shape.Polygon(nape.shape.Polygon.box(w, h));
+		
+		var pivotX:Float = sprite.pivot.x * sprite.scale.x;
+		var pivotY:Float = sprite.pivot.y * sprite.scale.y;
+		
+		var shapeTranslate:Vec2 = Vec2.get(-pivotX + w/2 , -pivotY + h/2 );
+		
+		
+		if (rect != null)
+		{
+			shapeTranslate.x += rect.x;
+			shapeTranslate.y += rect.y;
+		}
+		//shapeTranslate.muleq(scaleFactor);
+		
+		shape.sensorEnabled = sensor;
+		b.shapes.add(shape);
+		b.space = null;
+		b.translateShapes(shapeTranslate);
+		b.space = space;
+		
+		d.body = b;
+		d.shape = shape;
+		d.shapeTranslate = shapeTranslate;
+		
+		return d;
 	}
 	
 	override public function destroy()
