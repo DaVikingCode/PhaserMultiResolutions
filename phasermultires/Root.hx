@@ -41,6 +41,7 @@ class Root {
 	var height:Dynamic = "100%";
 	var renderer:Int = Phaser.AUTO;
 	var parent:String = "game";
+	var resolution:Float = 1;
 	var transparent:Bool = false;
 	var antialias:Bool = true;
 	var enableDebug:Bool = true;
@@ -65,6 +66,7 @@ class Root {
 		game = new Game( 
 		{ width:this.width,
 		height:this.height,
+		resolution:this.resolution,
 		renderer:this.renderer,
 		parent:this.parent,
 		transparent:this.transparent,
@@ -165,7 +167,7 @@ class Root {
 		
 		scaleFactor = findScaleFactor(scales, getRatio() * (useDevicePixelRatio?game.device.pixelRatio:1) );
 		invScaleFactor = 1 / scaleFactor;
-		trace("[Root] ScaleFactor: " + scaleFactor + " using device pixel ratio: " + useDevicePixelRatio);
+		trace("[Root] ScaleFactor: " + scaleFactor + " using device pixel ratio: " + useDevicePixelRatio + " " + width + " " + height);
 	}
 	
 	function onResize()
@@ -186,5 +188,5 @@ class Root {
 		
 	}
 	
-	public function getCurrentMultiResState():MultiResState { return cast(game.state.getCurrentState(), MultiResState);}
+	public function getCurrentMultiResState():MultiResState { if (game.state.getCurrentState() != null) return cast(game.state.getCurrentState(), MultiResState); else return null; }
 }
