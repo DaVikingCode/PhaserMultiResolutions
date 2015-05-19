@@ -72,7 +72,7 @@ class Root {
 		transparent:this.transparent,
 		antialias:this.antialias,
 		enableDebug:this.enableDebug,
-		state: { create:create, init:init }} );
+		state: { create:create, preload:preload, init:init }} );
     }
 	
 	//override and change config here, called before game is created.
@@ -182,6 +182,11 @@ class Root {
 		firstTimeResizeDone = true;
 		initialize();
     }
+	
+	function preload()
+	{
+		
+	}
 	
 	function initialize()
 	{

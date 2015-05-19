@@ -50,7 +50,7 @@ class PhysicsGameObject extends GameObject
 			dirty = false;
 		}
 		
-		if(game.config.enableDebug) {
+		if(game.config.enableDebug && body!= null) {
 				game.debug.geom(
 				new Rectangle((body.position.x - body.bounds.width/2 + shapeTranslate.x) * debugScaleX + debugOffX, (body.position.y - body.bounds.height/2 + shapeTranslate.y) * debugScaleY + debugOffY, body.bounds.width * debugScaleX, body.bounds.height * debugScaleY),debugArtColor,false);
 		}

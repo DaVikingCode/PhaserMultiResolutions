@@ -1,6 +1,7 @@
 package phasermultires.states;
 
 import phasermultires.objects.GameObject;
+import phasermultires.objects.GameObjectPool;
 import phasermultires.Root;
 import phasermultires.utils.MathUtils;
 import phaser.core.Group;
@@ -44,11 +45,13 @@ class MultiResState extends State
 	var containerFitMode = FULLSCREEN;
 	
 	public var gameObjects:Array<GameObject>;
+	public var gameObjectPools:Array<GameObjectPool>;
 	
 	public function new() 
 	{
 		super();
 		gameObjects = new Array<GameObject>();
+		gameObjectPools = new Array<GameObjectPool>();
 		root = Root.instance;
 	}
 	
@@ -178,6 +181,13 @@ class MultiResState extends State
 				return go;
 		}
 		
+		for (gop in gameObjectPools)
+		{
+			for (go in gop.active)
+				if (Std.is(go, t))
+					return cast(go,GameObject);
+		}
+		
 		return null;
 	}
 	
@@ -198,6 +208,17 @@ class MultiResState extends State
 		gameObjects.remove(object);
 	}
 	
+	public function addGameObjectPool(pool:GameObjectPool)
+	{
+		gameObjectPools.push(pool);
+	}
+	
+	public function removeGameObjectPool(pool:GameObjectPool)
+	{
+		pool.destroy();
+		gameObjectPools.remove(pool);
+	}
+	
 	var gogc:Array<GameObject> = new Array<GameObject>();
 	public var playing:Bool = true;
 	
@@ -214,6 +235,9 @@ class MultiResState extends State
 				gogc.push(go);
 		}
 		
+		for (gop in gameObjectPools)
+			gop.update();
+		
 		var go:GameObject;
 		while ((go = gogc.pop()) != null)
 			removeGameObject(go);
@@ -229,6 +253,10 @@ class MultiResState extends State
 		for (go in gameObjects) {
 			removeGameObject(go); }
 			
+		for (gop in gameObjectPools) {
+			removeGameObjectPool(gop); }
+			
+		gameObjectPools = [];
 		gameObjects = [];
 		gogc = [];
 		super.shutdown();
