@@ -87,7 +87,6 @@ class MultiResState extends State
 	}
 	
 	function onLoaded() {
-		trace("LOADED");
 		loaded = true;
 		initialize();
 		onResize();

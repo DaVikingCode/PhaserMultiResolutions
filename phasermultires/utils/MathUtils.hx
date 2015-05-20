@@ -10,6 +10,11 @@ class MathUtils
 	{
 			return Math.floor(Math.random() * (1 + max - min)) + min;
 	}
+	
+	public static function randomFloat(min:Float, max:Float):Float
+	{
+			return min + (max - min) * Math.random();
+	}
 		
 	public static function bestFitRatio(rect:Rectangle, into:Rectangle):Float
 	{
