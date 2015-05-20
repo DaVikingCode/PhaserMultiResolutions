@@ -1,15 +1,15 @@
 package phasermultires.states;
 
-import phasermultires.objects.GameObject;
-import phasermultires.objects.GameObjectPool;
-import phasermultires.Root;
-import phasermultires.utils.MathUtils;
 import phaser.core.Group;
 import phaser.core.State;
 import phaser.gameobjects.Graphics;
 import phaser.gameobjects.Sprite;
 import phaser.geom.Point;
 import phaser.geom.Rectangle;
+import phasermultires.objects.GameObject;
+import phasermultires.objects.GameObjectPool;
+import phasermultires.Root;
+import phasermultires.utils.MathUtils;
 
 class MultiResState extends State
 {
@@ -47,6 +47,8 @@ class MultiResState extends State
 	public var gameObjects:Array<GameObject>;
 	public var gameObjectPools:Array<GameObjectPool>;
 	
+	var loaded:Bool = false;
+	
 	public function new() 
 	{
 		super();
@@ -69,11 +71,24 @@ class MultiResState extends State
 		container = add.group();
 		
 		_onResize();
+		
+		load.onLoadComplete.add(onLoaded);
 	}
 	
 	override function create() {
         super.create();
 		game.scale.onSizeChange.add(onResize);
+		
+		if (!load.isLoading && !loaded)
+		{	
+			initialize();
+			onResize();
+		}
+	}
+	
+	function onLoaded() {
+		trace("LOADED");
+		loaded = true;
 		initialize();
 		onResize();
 	}
@@ -259,6 +274,15 @@ class MultiResState extends State
 		gameObjectPools = [];
 		gameObjects = [];
 		gogc = [];
+		
+		if (container != null)
+		{
+			container.removeAll(true);
+			container.destroy(true);
+		}
+		
+		load.onLoadComplete.remove(onLoaded);
+		
 		super.shutdown();
 	}
 	

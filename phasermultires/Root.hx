@@ -167,7 +167,9 @@ class Root {
 		
 		scaleFactor = findScaleFactor(scales, getRatio() * (useDevicePixelRatio?game.device.pixelRatio:1) );
 		invScaleFactor = 1 / scaleFactor;
-		trace("[Root] ScaleFactor: " + scaleFactor + " using device pixel ratio: " + useDevicePixelRatio + " " + width + " " + height);
+		
+		if(enableDebug)
+			trace("[Root] ScaleFactor: " + scaleFactor + " using device pixel ratio: " + useDevicePixelRatio + " " + width + " " + height);
 	}
 	
 	function onResize()
