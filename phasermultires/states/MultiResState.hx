@@ -47,8 +47,6 @@ class MultiResState extends State
 	public var gameObjects:Array<GameObject>;
 	public var gameObjectPools:Array<GameObjectPool>;
 	
-	var loaded:Bool = false;
-	
 	public function new() 
 	{
 		super();
@@ -71,23 +69,11 @@ class MultiResState extends State
 		container = add.group();
 		
 		_onResize();
-		
-		load.onLoadComplete.add(onLoaded);
 	}
 	
 	override function create() {
         super.create();
 		game.scale.onSizeChange.add(onResize);
-		
-		if (!load.isLoading && !loaded)
-		{	
-			initialize();
-			onResize();
-		}
-	}
-	
-	function onLoaded() {
-		loaded = true;
 		initialize();
 		onResize();
 	}
@@ -279,8 +265,6 @@ class MultiResState extends State
 			container.removeAll(true);
 			container.destroy(true);
 		}
-		
-		load.onLoadComplete.remove(onLoaded);
 		
 		super.shutdown();
 	}
