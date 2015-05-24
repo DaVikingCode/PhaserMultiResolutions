@@ -69,4 +69,34 @@ class MathUtils
 
 		return c;
 	}
+	
+	
+	
+	/**
+	 * Helper to get world bounds of object
+	 * @param	object (sprite,group...)
+	 * @return phaser Rectangle
+	 */
+	public static function getWorldBounds(object:Dynamic):Rectangle
+	{
+		var tx:Float = object.x;
+		var ty:Float = object.y;
+		var w:Float = object.width;
+		var h:Float = object.height;
+		
+		while ((object = object.parent) != null) {
+			
+			untyped object.updateTransform(); //force update transform
+			
+			tx *= object.scale.x;
+			ty *= object.scale.y;
+			w  *= object.scale.x;
+			h  *= object.scale.y;
+			
+			tx += object.x;
+			ty += object.y;
+		}
+		
+		return new Rectangle(tx, ty, w, h);
+	}
 }
