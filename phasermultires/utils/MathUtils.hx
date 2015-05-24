@@ -43,4 +43,30 @@ class MathUtils
 	{
 		return (inside.width / fit.width)*scale;
 	}
+	
+	/**
+	 * Point in polygon test
+	 * https://github.com/underscorediscovery/nme-haxe-pnpoly
+	 * @param	pt point to test for
+	 * @param	pos translation of polygon
+	 * @param	verts local vertices of polygon
+	 * @return
+	 */
+	public static function pnpoly(pt:Dynamic, pos:Dynamic, verts:Array<Dynamic>) : Bool {
+		var c : Bool = false;
+		var nvert : Int = verts.length;
+		var j : Int = nvert - 1;
+
+		for(i in 0 ... nvert) {            
+			
+			if ((( (verts[i].y+pos.y) > pt.y) != ((verts[j].y+pos.y) > pt.y)) &&
+			   (pt.x < ( (verts[j].x+pos.x) - (verts[i].x+pos.x)) * (pt.y - (verts[i].y+pos.y)) / ( (verts[j].y+pos.y) - (verts[i].y+pos.y)) + (verts[i].x+pos.x)) ) {
+				c = !c;
+			}
+
+			j = i;
+		}
+
+		return c;
+	}
 }
