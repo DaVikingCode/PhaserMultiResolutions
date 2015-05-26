@@ -1,5 +1,6 @@
 package phasermultires.objects;
 import nape.callbacks.InteractionCallback;
+import nape.geom.Geom;
 import nape.geom.Vec2;
 import nape.phys.Body;
 import nape.phys.BodyType;
@@ -67,6 +68,16 @@ class PhysicsGameObject extends GameObject
 		body.space = nape.space;
 	}
 	
+	public function intersects(other:PhysicsGameObject):Bool
+	{
+		return Geom.intersectsBody(this.body, other.body);
+	}
+	
+	public function contains(other:PhysicsGameObject):Bool
+	{
+		return Geom.contains(this.shape, other.shape);
+	}
+	
 	public function onBeginContact(interaction:InteractionCallback):Void{}
 	
 	public function onEndContact(interaction:InteractionCallback):Void{}
@@ -76,7 +87,7 @@ class PhysicsGameObject extends GameObject
 		body = new Body(BodyType.KINEMATIC,Vec2.weak(this.x,this.y));
 	}
 	
-	public static function bodyFactory(sprite:Sprite,space:nape.space.Space, type:BodyType, sensor:Bool, ?position:Vec2 = null, ?rect:Rectangle = null):Dynamic
+	public static function bodyFactory(sprite:Sprite,space:nape.space.Space, type:BodyType, sensor:Bool, ?position:Vec2 = null, ?rect:Rectangle = null,?b:Body = null):Dynamic
 	{
 		var d:Dynamic = {body:null, shape:null, shapeTranslate:null };
 		
@@ -92,7 +103,13 @@ class PhysicsGameObject extends GameObject
 			h = rect.height;
 		}
 		
-		var b:Body = new Body(type, position);
+		if(b == null)
+			b = new Body(type, position);
+		else
+		{
+			b.shapes.clear();
+		}
+		
 		var shape:Shape = new nape.shape.Polygon(nape.shape.Polygon.box(w, h));
 		
 		var pivotX:Float = sprite.pivot.x * sprite.scale.x;
