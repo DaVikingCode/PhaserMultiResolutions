@@ -1,4 +1,4 @@
-Copyright (c) $Aymeric Lamboley, Thomas Lefevre 2015 http://davikingcode.com
+Copyright (c) Aymeric Lamboley, Thomas Lefevre 2015 http://davikingcode.com
 
 Licence Agreement (The MIT License)
 
