@@ -9,6 +9,9 @@ class GameObjectPool
 	
 	var growthRate:Int = 1;
 	
+	public var kill:Bool = false;
+	public var enableUpdate:Bool = true;
+	
 	public var free:Array<Dynamic>;
 	public var active:Array<Dynamic>;
 	

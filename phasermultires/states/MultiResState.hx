@@ -206,27 +206,51 @@ class MultiResState extends State
 		gameObjects.push(object);
 	}
 	
-	public function removeGameObject(object:GameObject)
-	{
-		object.destroy();
-		object.initialized = false;
-		object.enableUpdate = false;
-		gameObjects.remove(object);
-	}
-	
 	public function addGameObjectPool(pool:GameObjectPool)
 	{
 		gameObjectPools.push(pool);
 	}
 	
+	public function removeGameObject(object:GameObject)
+	{
+		object.enableUpdate = false;
+		object.kill = true;
+	}
+	
 	public function removeGameObjectPool(pool:GameObjectPool)
+	{
+		pool.enableUpdate = false;
+		pool.kill = true;
+	}
+	
+	public function removeGameObjectImmediately(object:GameObject)
+	{
+		object.initialized = false;
+		object.kill = true;
+		object.enableUpdate = false;
+		gameObjects.remove(object);
+		object.destroy();
+	}
+	
+	public function removeGameObjectPoolImmediately(pool:GameObjectPool)
 	{
 		pool.destroy();
 		gameObjectPools.remove(pool);
 	}
 	
 	var gogc:Array<GameObject> = new Array<GameObject>();
-	public var playing:Bool = true;
+	var gopgc:Array<GameObjectPool> = new Array<GameObjectPool>();
+	
+	public function softDestroy()
+	{
+		for (gop in gameObjectPools) {
+			gop.kill = true;
+		}
+		
+		for (go in gameObjects) {
+			go.kill = true;
+		}
+	}
 	
 	override function update()
 	{
@@ -234,19 +258,26 @@ class MultiResState extends State
 
 		for (go in gameObjects)
 		{
-			if(go.enableUpdate)
-				go.update();
-				
 			if (go.kill)
 				gogc.push(go);
+			else if(go.enableUpdate)
+				go.update();
 		}
 		
-		for (gop in gameObjectPools)
-			gop.update();
+		for (gop in gameObjectPools) {
+			if (gop.kill)
+				gopgc.push(gop);
+			else if(gop.enableUpdate)
+				gop.update();	
+		}
+		
+		var gop:GameObjectPool;
+		while ((gop = gopgc.pop()) != null)
+			removeGameObjectPoolImmediately(gop);
 		
 		var go:GameObject;
 		while ((go = gogc.pop()) != null)
-			removeGameObject(go);
+			removeGameObjectImmediately(go);
 			
 		if (game.device.desktop)
 		{
@@ -301,15 +332,16 @@ class MultiResState extends State
 		gameObjects.reverse();
 		
 		for (go in gameObjects) {
-			removeGameObject(go); }
+			removeGameObjectImmediately(go); }
 			
 		for (gop in gameObjectPools) {
-			removeGameObjectPool(gop); }
+			removeGameObjectPoolImmediately(gop); }
 			
 		desktopCursorContainers = [];
 		gameObjectPools = [];
 		gameObjects = [];
 		gogc = [];
+		gopgc = [];
 		
 		if (container != null)
 		{
