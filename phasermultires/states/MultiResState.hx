@@ -49,6 +49,7 @@ class MultiResState extends State
 	
 	public var showCursor = false;
 	public var desktopCursorContainers:Array<Group>;
+	public var clearContainerOnCreate = true;
 	
 	public function new() 
 	{
@@ -78,6 +79,8 @@ class MultiResState extends State
 	}
 	
 	override function create() {
+		if(clearContainerOnCreate)
+			container.removeAll(true);
         super.create();
 		game.scale.onSizeChange.add(onResize);
 		initialize();
