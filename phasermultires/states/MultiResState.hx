@@ -53,6 +53,7 @@ class MultiResState extends State
 	public function new() 
 	{
 		super();
+		
 		gameObjects = new Array<GameObject>();
 		gameObjectPools = new Array<GameObjectPool>();
 		desktopCursorContainers = new Array<Group>();
@@ -65,6 +66,7 @@ class MultiResState extends State
 		baseRect = new Rectangle(0,0,0,0);
 		stageRect = new Rectangle(0, 0, 0, 0);
 		screenRect = new Rectangle(0, 0, 0, 0);
+		
 		
 		createHelperRects();
 		
@@ -248,13 +250,13 @@ class MultiResState extends State
 			
 		if (game.device.desktop)
 		{
-			if (desktopCursorContainers.length > 0)
+			if (desktopCursorContainers!=null && desktopCursorContainers.length > 0)
 			{
 				showCursor = false;
 				
 				for (cont in desktopCursorContainers)
 				{
-					cont.forEachAlive(forEachAlive, this);
+					cont.forEachAlive(forEachAliveCursor, this);
 				}
 				
 				if (showCursor)
@@ -265,7 +267,7 @@ class MultiResState extends State
 		}
 	}
 	var r:Rectangle = new Rectangle(0, 0, 0, 0);
-	function forEachAlive(s:Dynamic):Bool
+	function forEachAliveCursor(s:Dynamic):Bool
 	{
 		if (s.inputEnabled)
 			{
@@ -304,6 +306,7 @@ class MultiResState extends State
 		for (gop in gameObjectPools) {
 			removeGameObjectPool(gop); }
 			
+		desktopCursorContainers = [];
 		gameObjectPools = [];
 		gameObjects = [];
 		gogc = [];
