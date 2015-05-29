@@ -140,6 +140,8 @@ class PhysicsGameObject extends GameObject
 	{
 		shapeTranslate.dispose();
 		if (body != null) {
+			if(Reflect.hasField(body.userData,"bodyUserData") && body.userData.bodyUserData != null)
+				body.userData.bodyUserData.destroy();
 			nape.space.bodies.remove(body);
 			body.space = null;
 		}

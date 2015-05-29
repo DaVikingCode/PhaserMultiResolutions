@@ -36,8 +36,11 @@ class Nape extends GameObject
 	{
 		interactionListener.destroy();
 		interactionListener = null;
+		
+		space.bodies.clear();
 		space.clear();
 		space = null;
+		
 		super.destroy();
 	}
 	

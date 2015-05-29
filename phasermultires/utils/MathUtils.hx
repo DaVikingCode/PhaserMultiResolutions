@@ -77,12 +77,22 @@ class MathUtils
 	 * @param	object (sprite,group...)
 	 * @return phaser Rectangle
 	 */
-	public static function getWorldBounds(object:Dynamic):Rectangle
+	public static function getWorldBounds(object:Dynamic,?rect:Rectangle = null):Rectangle
 	{
 		var tx:Float = object.x;
 		var ty:Float = object.y;
 		var w:Float = object.width;
 		var h:Float = object.height;
+		
+		if(object.pivot) {
+			tx -= object.pivot.x;
+			ty -= object.pivot.y;
+		}
+			
+		if(object.anchor) {
+			tx -= object.anchor.x * object.width;
+			ty -= object.anchor.y * object.height;
+		}
 		
 		while ((object = object.parent) != null) {
 			
@@ -95,8 +105,23 @@ class MathUtils
 			
 			tx += object.x;
 			ty += object.y;
+			
+			if(object.pivot) {
+				tx -= object.pivot.x;
+				ty -= object.pivot.y;
+			}
+			
+			if(object.anchor) {
+				tx -= object.anchor.x * object.width;
+				ty -= object.anchor.y * object.height;
+			}
 		}
 		
-		return new Rectangle(tx, ty, w, h);
+		if (rect == null)
+			rect = new Rectangle(tx, ty, w, h);
+		else
+			rect.setTo(tx, ty, w, h);
+			
+		return rect;
 	}
 }

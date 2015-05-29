@@ -47,11 +47,15 @@ class MultiResState extends State
 	public var gameObjects:Array<GameObject>;
 	public var gameObjectPools:Array<GameObjectPool>;
 	
+	public var showCursor = false;
+	public var desktopCursorContainers:Array<Group>;
+	
 	public function new() 
 	{
 		super();
 		gameObjects = new Array<GameObject>();
 		gameObjectPools = new Array<GameObjectPool>();
+		desktopCursorContainers = new Array<Group>();
 		root = Root.instance;
 	}
 	
@@ -241,11 +245,55 @@ class MultiResState extends State
 		var go:GameObject;
 		while ((go = gogc.pop()) != null)
 			removeGameObject(go);
+			
+		if (game.device.desktop)
+		{
+			if (desktopCursorContainers.length > 0)
+			{
+				showCursor = false;
+				
+				for (cont in desktopCursorContainers)
+				{
+					cont.forEachAlive(forEachAlive, this);
+				}
+				
+				if (showCursor)
+					game.canvas.style.cursor = "pointer";
+				else
+					game.canvas.style.cursor = "default";
+			}
+		}
+	}
+	var r:Rectangle = new Rectangle(0, 0, 0, 0);
+	function forEachAlive(s:Dynamic):Bool
+	{
+		if (s.inputEnabled)
+			{
+				MathUtils.getWorldBounds(s,r);
+				if (r.contains(root.game.input.x, root.game.input.y))
+				{
+					showCursor = true;
+					return true;
+				}
+			}
+			
+		return false;
 	}
 	
 	override function shutdown():Void {
-		game.scale.onSizeChange.remove(_onResize);
-		game.scale.onSizeChange.remove(onResize);
+		
+		if (showCursor)
+		{
+			game.canvas.style.cursor = "default";
+		}
+		
+		
+		game.scale.onSizeChange.removeAll();
+		
+		if (letterbox)
+		{
+			containerMask.destroy(true);
+		}
 		
 		//destroy objects in reverse order so physics are last.
 		gameObjects.reverse();
@@ -262,7 +310,6 @@ class MultiResState extends State
 		
 		if (container != null)
 		{
-			container.removeAll(true);
 			container.destroy(true);
 		}
 		

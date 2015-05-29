@@ -12,4 +12,14 @@ class BodyUserData
 		this.data = data;
 	}
 	
+	public function destroy()
+	{
+		gameObject = null;
+		
+		if (data != null && Reflect.hasField(data, "destroy"))
+			data.destroy();
+			
+		data = null;
+	}
+	
 }

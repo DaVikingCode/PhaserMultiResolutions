@@ -139,10 +139,10 @@ class GameObjectPool
 	public function destroy()
 	{
 		for (g in active)
-			{
-				_dispose(g);
-				g.destroy();
-			}
+		{
+			_dispose(g);
+			g.destroy();
+		}
 			
 		for (g in free) {
 			_dispose(g);

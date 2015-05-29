@@ -61,7 +61,11 @@ class GameObject
 	
 	public function resize() {}
 	
-	public function destroy() { }
+	public function destroy() {
+		if(sprite != null)
+			sprite.destroy(true);
+		enableUpdate = false;
+	}
 	
 	public function get_x() {
 		return x;
