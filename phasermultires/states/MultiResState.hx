@@ -62,6 +62,7 @@ class MultiResState extends State
 	}
 	
 	override function preload() {
+		root.currentState = this;
 		super.preload();
 		
 		baseRect = new Rectangle(0,0,0,0);
@@ -130,7 +131,7 @@ class MultiResState extends State
 	/**
 	 * container setup
 	 */
-	function _onResize()
+	public function _onResize()
 	{
 		createHelperRects();
 		

@@ -51,6 +51,8 @@ class Root {
 	public var canExpandParent = false;
 	public var forceOrientation = ORIENTATION_NONE;
 	public var useDevicePixelRatio = true;
+	
+	public var currentState:MultiResState;
 
     public function new() {
 		
