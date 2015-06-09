@@ -330,6 +330,8 @@ class MultiResState extends State
 		if (letterbox)
 		{
 			containerMask.destroy(true);
+			containerMask = null;
+			container.mask = null;
 		}
 		
 		//destroy objects in reverse order so physics are last.
