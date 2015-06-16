@@ -94,7 +94,7 @@ class MultiResState extends State
 	
 	function createHelperRects()
 	{
-		screenRect.setTo(0, 0, game.width, game.height);
+		screenRect.setTo(0, 0, root.stageWidth, root.stageHeight);
 		baseRect.setTo(0, 0, root.base.width * root.scaleFactor , root.base.height * root.scaleFactor);
 		
 		switch(containerFitMode)
@@ -135,8 +135,8 @@ class MultiResState extends State
 	{
 		createHelperRects();
 		
-		container.x = game.width * containerAlign.x - (root.base.width * ratio) * containerAlign.x;
-		container.y = game.height * containerAlign.y - (root.base.height * ratio) * containerAlign.y;
+		container.x = root.stageWidth * containerAlign.x - (root.base.width * ratio) * containerAlign.x;
+		container.y = root.stageHeight * containerAlign.y - (root.base.height * ratio) * containerAlign.y;
 		
 		container.scale.x = container.scale.y = root.invScaleFactor * ratio;
 		

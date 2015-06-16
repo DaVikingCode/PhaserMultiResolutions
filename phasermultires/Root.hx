@@ -1,11 +1,14 @@
 package phasermultires;
 
-import phasermultires.states.MultiResState;
 import js.Browser;
+import js.html.CSSStyleDeclaration;
+import js.html.Element;
 import phaser.core.Game;
 import phaser.core.ScaleManager;
 import phaser.geom.Rectangle;
 import phaser.Phaser;
+import phasermultires.states.MultiResState;
+import phasermultires.utils.MathUtils;
 
 /**
  * Root class for phaser resolution idependent games by Da Viking Code
@@ -45,12 +48,23 @@ class Root {
 	var transparent:Bool = false;
 	var antialias:Bool = true;
 	var enableDebug:Bool = true;
+	var scaleMode:Int = ScaleManager.SHOW_ALL;
+	
+	var element:Element;
+	public var elementStyle:CSSStyleDeclaration;
 	
 	public var pageAlignHorizontally = true;
 	public var pageAlignVertically = true;
 	public var canExpandParent = false;
 	public var forceOrientation = ORIENTATION_NONE;
 	public var useDevicePixelRatio = true;
+	
+	public var stageWidth:Float = 800;
+	public var stageHeight:Float = 600;
+	
+	public var screenWidth:Float = 800;
+	public var screenHeight:Float = 600;
+	public var stageRatio:Float = 1;
 	
 	public var currentState:MultiResState;
 
@@ -64,10 +78,23 @@ class Root {
 		isCocoon = Reflect.hasField(Browser.navigator, 'isCocoonJS') ? true : false;
 		
 		setupConfig();
-        
+		
+		element = Browser.window.document.getElementById(parent);
+		elementStyle = Browser.window.getComputedStyle(element);
+		
+		var w:Float =  Std.parseFloat(elementStyle.width.split("p")[0]) * Browser.window.devicePixelRatio;
+		var h:Float =  Std.parseFloat(elementStyle.height.split("p")[0]) * Browser.window.devicePixelRatio;
+		
+		if (forceOrientation == Root.ORIENTATION_LANDSCAPE && h > w) { var t = w; w = h; h = t; }
+		
+		var r = MathUtils.bestFitRatio(base, new Rectangle(0, 0, w, h));
+		
+		if(useDevicePixelRatio)
+			resolution = Browser.window.devicePixelRatio;
+		
 		game = new Game( 
-		{ width:this.width,
-		height:this.height,
+		{ width:base.width * r,
+		height:base.height * r,
 		resolution:this.resolution,
 		renderer:this.renderer,
 		parent:this.parent,
@@ -118,29 +145,23 @@ class Root {
 	function init()
 	{	
 		isDesktop = game.device.desktop;
+		stageRatio = game.device.pixelRatio;
 
 		if (isDesktop)
 		{
-			game.scale.scaleMode = ScaleManager.RESIZE;
+			game.scale.scaleMode = scaleMode;
 		}
 		else
 		{
-			game.scale.scaleMode = isCocoon ? ScaleManager.USER_SCALE : ScaleManager.RESIZE;
+			game.scale.scaleMode = isCocoon ? ScaleManager.USER_SCALE : scaleMode;
 
 			game.scale.pageAlignHorizontally = pageAlignHorizontally;
 			game.scale.pageAlignVertically = pageAlignVertically;
 			
 			game.scale.compatibility.canExpandParent = canExpandParent;
-			
-			if(forceOrientation != ORIENTATION_NONE) {
-				game.scale.forceOrientation( forceOrientation == ORIENTATION_BOTH? true :  forceOrientation == ORIENTATION_LANDSCAPE ,  forceOrientation == ORIENTATION_BOTH? true :  forceOrientation == ORIENTATION_PORTRAIT );
-			}
-			
-			game.scale.enterIncorrectOrientation.add(onEnterIncorrectOrientation);
-			game.scale.leaveIncorrectOrientation.add(onLeaveIncorrectOrientation);
-			game.scale.onOrientationChange.add(onOrientationChange);
 
-			game.scale.onSizeChange.add(onResize);
+			game.scale.onSizeChange.add(onResize); 
+		
 		}
 
 		game.scale.setResizeCallback(onResize, this);
@@ -153,10 +174,31 @@ class Root {
 	
 	function getRatio():Float
 	{
-		if (game.height / game.width > base.height / base.width)
-			return game.width / base.width;
+		if (stageHeight /stageWidth > base.height / base.width)
+			return stageWidth / base.width;
 		else
-			return game.height / base.height;
+			return stageHeight / base.height;
+	}
+	
+	var currentOrientationIsIncorrect:Bool = false;
+	var lastOrientation = Root.ORIENTATION_NONE;
+	var currentOrientation = Root.ORIENTATION_NONE;
+	function orientationTest()
+	{	
+		currentOrientation = screenWidth > screenHeight ? Root.ORIENTATION_LANDSCAPE : Root.ORIENTATION_PORTRAIT;
+		
+		if (currentOrientation != lastOrientation)
+			onOrientationChange();
+			
+		lastOrientation = currentOrientation;
+		
+		if (currentOrientation == forceOrientation)
+			onLeaveIncorrectOrientation();
+		else if (forceOrientation == Root.ORIENTATION_LANDSCAPE && currentOrientation != Root.ORIENTATION_LANDSCAPE) 
+			onEnterIncorrectOrientation();
+		else if (forceOrientation == Root.ORIENTATION_PORTRAIT && currentOrientation != Root.ORIENTATION_PORTRAIT) 
+			onEnterIncorrectOrientation();
+		
 	}
 	
 	function resetScales()
@@ -164,19 +206,26 @@ class Root {
 		realScaleFactor = getRatio();
 		invRealScaleFactor = 1 / realScaleFactor;
 		
+		elementStyle = Browser.window.getComputedStyle(element);
+		
+		screenWidth =  Std.parseFloat(elementStyle.width.split("p")[0]) * (useDevicePixelRatio ? Browser.window.devicePixelRatio : 1);
+		screenHeight =  Std.parseFloat(elementStyle.height.split("p")[0]) * (useDevicePixelRatio ? Browser.window.devicePixelRatio : 1);
+		
+		stageWidth = game.width;
+		stageHeight = game.height;
+		
 		if (firstTimeResizeDone) //ScaleFactor is calculated once.
 			return;
-		
-		scaleFactor = findScaleFactor(scales, getRatio() * (useDevicePixelRatio?game.device.pixelRatio:1) );
+			
+		scaleFactor = findScaleFactor(scales, getRatio() );
 		invScaleFactor = 1 / scaleFactor;
 		
-		if(enableDebug)
-			trace("[Root] ScaleFactor: " + scaleFactor + " using device pixel ratio: " + useDevicePixelRatio + " " + width + " " + height);
 	}
 	
 	function onResize()
 	{
 		resetScales();
+		orientationTest();
 	}
 	
 	/**
@@ -197,5 +246,4 @@ class Root {
 		
 	}
 	
-	public function getCurrentMultiResState():MultiResState { if (game.state.getCurrentState() != null) return cast(game.state.getCurrentState(), MultiResState); else return null; }
 }

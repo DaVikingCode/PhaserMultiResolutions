@@ -30,7 +30,7 @@ class GameObjectPool
 		gc = new Array<Dynamic>();
 		
 		game = Root.instance;
-		state = game.getCurrentMultiResState();
+		state = game.currentState;
 		
 		this.growthRate = 1;
 	}

@@ -39,7 +39,7 @@ class GameObject
 		
 		root = Root.instance;
 		game = root.game;
-		state = root.getCurrentMultiResState();
+		state = root.currentState;
 		this.group = group != null? group : state.container;
 		cacheBounds = new Rectangle(0, 0, 0, 0);
 	}
