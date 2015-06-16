@@ -180,7 +180,7 @@ class Root {
 			return stageHeight / base.height;
 	}
 	
-	var currentOrientationIsIncorrect:Bool = false;
+	var lastOrientationIncorrect:Bool = false;
 	var lastOrientation = Root.ORIENTATION_NONE;
 	var currentOrientation = Root.ORIENTATION_NONE;
 	function orientationTest()
@@ -192,12 +192,16 @@ class Root {
 			
 		lastOrientation = currentOrientation;
 		
-		if (currentOrientation == forceOrientation)
+		if (lastOrientationIncorrect && currentOrientation == forceOrientation)
 			onLeaveIncorrectOrientation();
-		else if (forceOrientation == Root.ORIENTATION_LANDSCAPE && currentOrientation != Root.ORIENTATION_LANDSCAPE) 
+		else if (
+		(forceOrientation == Root.ORIENTATION_LANDSCAPE && currentOrientation != Root.ORIENTATION_LANDSCAPE) 
+		|| 
+		(forceOrientation == Root.ORIENTATION_PORTRAIT && currentOrientation != Root.ORIENTATION_PORTRAIT)
+		) {
+			lastOrientationIncorrect = true;
 			onEnterIncorrectOrientation();
-		else if (forceOrientation == Root.ORIENTATION_PORTRAIT && currentOrientation != Root.ORIENTATION_PORTRAIT) 
-			onEnterIncorrectOrientation();
+		}
 		
 	}
 	
