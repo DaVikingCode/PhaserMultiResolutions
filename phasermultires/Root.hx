@@ -82,15 +82,16 @@ class Root {
 		element = Browser.window.document.getElementById(parent);
 		elementStyle = Browser.window.getComputedStyle(element);
 		
-		var w:Float =  Std.parseFloat(elementStyle.width.split("p")[0]) * Browser.window.devicePixelRatio;
-		var h:Float =  Std.parseFloat(elementStyle.height.split("p")[0]) * Browser.window.devicePixelRatio;
+		if(useDevicePixelRatio)
+			resolution = Browser.window.devicePixelRatio;
+			
+		
+		var w:Float =  Std.parseFloat(elementStyle.width.split("p")[0]) * resolution;
+		var h:Float =  Std.parseFloat(elementStyle.height.split("p")[0]) * resolution;
 		
 		if (forceOrientation == Root.ORIENTATION_LANDSCAPE && h > w) { var t = w; w = h; h = t; }
 		
 		var r = MathUtils.bestFitRatio(base, new Rectangle(0, 0, w, h));
-		
-		if(useDevicePixelRatio)
-			resolution = Browser.window.devicePixelRatio;
 		
 		game = new Game( 
 		{ width:base.width * r,
@@ -102,6 +103,8 @@ class Root {
 		antialias:this.antialias,
 		enableDebug:this.enableDebug,
 		state: { create:create, preload:preload, init:init }} );
+		
+		trace(w, h, "resolution : " + resolution);
     }
 	
 	//override and change config here, called before game is created.
@@ -223,6 +226,8 @@ class Root {
 		
 		stageWidth = game.width;
 		stageHeight = game.height;
+		
+		trace(realScaleFactor, scaleFactor);
 		
 		if (firstTimeResizeDone) //ScaleFactor is calculated once.
 			return;
