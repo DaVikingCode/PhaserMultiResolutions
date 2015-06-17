@@ -103,8 +103,6 @@ class Root {
 		antialias:this.antialias,
 		enableDebug:this.enableDebug,
 		state: { create:create, preload:preload, init:init }} );
-		
-		trace(w, h, "resolution : " + resolution);
     }
 	
 	//override and change config here, called before game is created.
@@ -226,8 +224,6 @@ class Root {
 		
 		stageWidth = game.width;
 		stageHeight = game.height;
-		
-		trace(realScaleFactor, scaleFactor);
 		
 		if (firstTimeResizeDone) //ScaleFactor is calculated once.
 			return;
