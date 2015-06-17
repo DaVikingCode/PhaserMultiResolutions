@@ -150,6 +150,12 @@ class Root {
 		if (isDesktop)
 		{
 			game.scale.scaleMode = scaleMode;
+			
+			game.scale.pageAlignHorizontally = pageAlignHorizontally;
+			game.scale.pageAlignVertically = pageAlignVertically;
+			
+			game.scale.onSizeChange.add(onResize); 
+			
 		}
 		else
 		{
@@ -189,8 +195,6 @@ class Root {
 		
 		if (currentOrientation != lastOrientation)
 			onOrientationChange();
-			
-		lastOrientation = currentOrientation;
 		
 		if (lastOrientationIncorrect && currentOrientation == forceOrientation)
 			onLeaveIncorrectOrientation();
@@ -202,6 +206,8 @@ class Root {
 			lastOrientationIncorrect = true;
 			onEnterIncorrectOrientation();
 		}
+		
+		lastOrientation = currentOrientation;
 		
 	}
 	
@@ -238,6 +244,7 @@ class Root {
     function create() {
 		firstTimeResizeDone = true;
 		initialize();
+		orientationTest();
     }
 	
 	function preload()
