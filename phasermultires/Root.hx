@@ -66,6 +66,8 @@ class Root {
 	public var screenHeight:Float = 600;
 	public var stageRatio:Float = 1;
 	
+	public var resMultiplier:Float = 1;
+	
 	public var currentState:MultiResState;
 
     public function new() {
@@ -84,18 +86,17 @@ class Root {
 		
 		if(useDevicePixelRatio)
 			resolution = Browser.window.devicePixelRatio;
-			
 		
 		var w:Float =  Std.parseFloat(elementStyle.width.split("p")[0]) * resolution;
 		var h:Float =  Std.parseFloat(elementStyle.height.split("p")[0]) * resolution;
 		
 		if (forceOrientation == Root.ORIENTATION_LANDSCAPE && h > w) { var t = w; w = h; h = t; }
 		
-		var r = MathUtils.bestFitRatio(base, new Rectangle(0, 0, w, h));
+		var r = MathUtils.bestFitRatio(new Rectangle(0,0,base.width/resMultiplier,base.height/resMultiplier), new Rectangle(0, 0, w, h));
 		
 		game = new Game( 
-		{ width:base.width * r,
-		height:base.height * r,
+		{ width:Math.floor(base.width * r),
+		height:Math.floor(base.height * r),
 		resolution:this.resolution,
 		renderer:this.renderer,
 		parent:this.parent,
@@ -120,7 +121,7 @@ class Root {
 			return -1;
 		});
 		
-		var scaleF:Float = Math.floor(ratio * 1000) / 1000;
+		var scaleF:Float = Math.floor(ratio * stageRatio * 1000) / 1000;
 		var closest:Float = -1;
 		var f:Float;
 		
@@ -146,7 +147,7 @@ class Root {
 	function init()
 	{	
 		isDesktop = game.device.desktop;
-		stageRatio = game.device.pixelRatio;
+		stageRatio = game.device.pixelRatio * resMultiplier;
 
 		if (isDesktop)
 		{
