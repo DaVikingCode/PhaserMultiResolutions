@@ -5,6 +5,7 @@ import js.html.CSSStyleDeclaration;
 import js.html.Element;
 import phaser.core.Game;
 import phaser.core.ScaleManager;
+import phaser.core.Signal;
 import phaser.geom.Rectangle;
 import phaser.Phaser;
 import phasermultires.states.MultiResState;
@@ -59,6 +60,8 @@ class Root {
 	public var forceOrientation = ORIENTATION_NONE;
 	public var useDevicePixelRatio = true;
 	
+	public var onGameResize:Signal;
+	
 	public var stageWidth:Float = 800;
 	public var stageHeight:Float = 600;
 	
@@ -79,7 +82,18 @@ class Root {
 		
 		isCocoon = Reflect.hasField(Browser.navigator, 'isCocoonJS') ? true : false;
 		
+		onGameResize = new Signal();
+		
 		setupConfig();
+		
+		onBodyLoadFunc = Browser.document.body.onload;
+		Browser.document.body.onload = onBodyLoad;
+    }
+	
+	var onBodyLoadFunc:Dynamic;
+	function onBodyLoad():Void {
+		
+		try {if(onBodyLoadFunc != null) onBodyLoadFunc();}
 		
 		element = Browser.window.document.getElementById(parent);
 		elementStyle = Browser.window.getComputedStyle(element);
@@ -104,7 +118,7 @@ class Root {
 		antialias:this.antialias,
 		enableDebug:this.enableDebug,
 		state: { create:create, preload:preload, init:init }} );
-    }
+	}
 	
 	//override and change config here, called before game is created.
 	function setupConfig() {}
@@ -238,6 +252,7 @@ class Root {
 	{
 		resetScales();
 		orientationTest();
+		onGameResize.dispatch();
 	}
 	
 	/**

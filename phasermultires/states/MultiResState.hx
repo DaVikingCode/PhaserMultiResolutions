@@ -72,7 +72,7 @@ class MultiResState extends State
 		
 		createHelperRects();
 		
-		game.scale.onSizeChange.add(_onResize);
+		root.onGameResize.add(_onResize);
 
 		container = add.group();
 		
@@ -83,7 +83,7 @@ class MultiResState extends State
 		if(clearContainerOnCreate)
 			container.removeAll(true);
         super.create();
-		game.scale.onSizeChange.add(onResize);
+		root.onGameResize.add(onResize);
 		initialize();
 		onResize();
 	}
@@ -324,8 +324,8 @@ class MultiResState extends State
 			game.canvas.style.cursor = "default";
 		}
 		
-		
-		game.scale.onSizeChange.removeAll();
+		root.onGameResize.remove(_onResize);
+		root.onGameResize.remove(onResize);
 		
 		if (letterbox)
 		{
